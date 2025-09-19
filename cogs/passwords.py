@@ -6,27 +6,10 @@ import random
 import json
 import os
 from utils.helper import require_helios_category
+from utils.helper import load_words
 
 # Path to the words.json file containing Norwegian words
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'words.json')
-
-def load_words():
-    """
-    Load Norwegian words from the JSON file.
-    Supports both a plain array or an object with a 'words' key.
-    Returns a list of non-empty strings.
-    """
-    try:
-        with open(DATA_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-        if isinstance(data, dict) and 'words' in data:
-            words = data['words']
-        else:
-            words = data
-        return [str(w).strip() for w in words if isinstance(w, str) and w.strip()]
-    except Exception:
-        # If file is missing or invalid, return empty list
-        return []
 
 def generate_password():
     """
@@ -40,6 +23,7 @@ def generate_password():
     """
     words = load_words()
     if not words:
+        # Handle the case where no words are loaded (error already printed)
         return None
     max_len = 14
     for _ in range(10):
