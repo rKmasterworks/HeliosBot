@@ -3,19 +3,15 @@ from discord.ext import commands
 from discord import app_commands
 import subprocess
 import requests
+from utils.helper import require_helios_category
 
 class Network(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
     @app_commands.command(name="ping", description="Ping a host and get the result.")
+    @require_helios_category
     async def ping(self, interaction: discord.Interaction, host: str):
-        # Restrict to 'Helios Labs' category
-        category = getattr(interaction.channel, 'category', None)
-        if not category or category.name != "Helios Labs":
-            await interaction.response.send_message(
-                "This command can only be used in the 'Helios Labs' category.", ephemeral=True)
-            return
         try:
             # Defer response to avoid timeout
             await interaction.response.defer(ephemeral=True)
@@ -29,13 +25,8 @@ class Network(commands.Cog):
             await interaction.followup.send(f"Error: {e}", ephemeral=True)
 
     @app_commands.command(name="ipinfo", description="Get info about an IP address.")
+    @require_helios_category
     async def ipinfo(self, interaction: discord.Interaction, ip: str):
-        # Restrict to 'Helios Labs' category
-        category = getattr(interaction.channel, 'category', None)
-        if not category or category.name != "Helios Labs":
-            await interaction.response.send_message(
-                "This command can only be used in the 'Helios Labs' category.", ephemeral=True)
-            return
         # Try to respond quickly with ephemeral message
         url = f"http://ip-api.com/json/{ip}"
         try:

@@ -1,14 +1,11 @@
 
 import discord
 from discord.ext import commands
-
-# Discord imports for bot and command functionality
-import discord
-from discord.ext import commands
 from discord import app_commands
 import random
 import json
 import os
+from utils.helper import require_helios_category
 
 # Path to the words.json file containing Norwegian words
 DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'words.json')
@@ -73,17 +70,12 @@ class Passwords(commands.Cog):
         self.bot = bot
 
     @app_commands.command(name="password", description="Generate a Norwegian word-based password and receive it as a hidden message.")
+    @require_helios_category
     async def password(self, interaction: discord.Interaction):
         """
         Slash command to generate a password and send it as an ephemeral (hidden) message in the server.
         Only works in channels under the 'Helios Labs' category.
         """
-        # Restrict command usage to 'Helios Labs' category
-        category = getattr(interaction.channel, 'category', None)
-        if not category or category.name != "Helios Labs":
-            await interaction.response.send_message(
-                "This command can only be used in the 'Helios Labs' category.", ephemeral=True)
-            return
         password = generate_password()
         if not password:
             await interaction.response.send_message("Could not load word list. Please contact the bot admin.", ephemeral=True)

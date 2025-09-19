@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 from discord import app_commands
 import datetime
+from utils.helper import require_helios_category
 
 class Uptime(commands.Cog):
     def __init__(self, bot):
@@ -10,13 +11,8 @@ class Uptime(commands.Cog):
         self.start_time = datetime.datetime.now(datetime.timezone.utc)
 
     @app_commands.command(name="uptime", description="Shows how long Helios has been active.")
+    @require_helios_category
     async def uptime(self, interaction: discord.Interaction):
-        # Restrict to 'Helios Labs' category
-        category = getattr(interaction.channel, 'category', None)
-        if not category or category.name != "Helios Labs":
-            await interaction.response.send_message(
-                "This command can only be used in the 'Helios Labs' category.", ephemeral=True)
-            return
         now = datetime.datetime.now(datetime.timezone.utc)
         delta = now - self.start_time
 
