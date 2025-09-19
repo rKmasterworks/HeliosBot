@@ -45,36 +45,25 @@ def generate_password():
     if not words:
         return None
     max_len = 14
-    for _ in range(10):  # Try up to 10 times to find a good combination
+    for _ in range(10):
         num_words = random.choice([2, 3])
-        # Pick unique words if possible
-        if len(words) >= num_words:
-            selected_words = random.sample(words, k=num_words)
-        else:
-            selected_words = [random.choice(words) for _ in range(num_words)]
-        word_part = ''.join(selected_words)
-        # Always add at least one digit at the end
+        selected = random.sample(words, k=min(num_words, len(words)))
+        word_part = ''.join(selected)
         digit_count = max(1, max_len - len(word_part))
-        digit_part = ''.join(random.choices('0123456789', k=digit_count))
-        password = word_part + digit_part
-        # If too long, remove last word and try again
-        if len(password) > max_len and num_words > 1:
-            selected_words = selected_words[:-1]
-            word_part = ''.join(selected_words)
+        password = word_part + ''.join(random.choices('0123456789', k=digit_count))
+        # If too long, try with one less word
+        if len(password) > max_len and len(selected) > 1:
+            selected = selected[:-1]
+            word_part = ''.join(selected)
             digit_count = max(1, max_len - len(word_part))
-            digit_part = ''.join(random.choices('0123456789', k=digit_count))
-            password = word_part + digit_part
-        # Return if password is correct length and has at least one digit
+            password = word_part + ''.join(random.choices('0123456789', k=digit_count))
         if len(password) == max_len and any(c.isdigit() for c in password[-digit_count:]):
-            password = password.capitalize()
-            return password
-    # Fallback: use one word + digits
+            return password.capitalize()
+    # Fallback: one word + digits
     word = random.choice(words)
     digit_count = max(1, max_len - len(word))
-    digit_part = ''.join(random.choices('0123456789', k=digit_count))
-    password = word + digit_part
-    password = password.capitalize()
-    return password[:max_len]
+    password = word + ''.join(random.choices('0123456789', k=digit_count))
+    return password.capitalize()[:max_len]
 class Passwords(commands.Cog):
     """
     Cog for password generation using Norwegian words and digits.
