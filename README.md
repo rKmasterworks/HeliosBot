@@ -3,11 +3,12 @@
 Helios is a modular Discord bot built with discord.py and slash commands.
 
 ## Features
-- `/password`: Generates a random password using Norwegian words from a JSON file and sends it as a hidden (ephemeral) message.
+- `/teacherpassword`: Generates a random teacher password (14 characters, Norwegian words + digits) and sends it as a hidden (ephemeral) message.
+- `/studentpassword`: Generates a random student password (8 characters, Norwegian words + digits) and sends it as a hidden (ephemeral) message.
 - `/ping <host>`: Pings a given host and returns the result.
 - `/ipinfo <ip>`: Fetches information about an IP address (country, city, ISP, organization).
 - `/help`: Shows available commands in an embed.
- `/uptime`: Shows how long Helios has been online (hidden message).
+- `/uptime`: Shows how long Helios has been online (hidden message).
 
 ## Setup
 1. Clone the repository and install dependencies:
@@ -25,7 +26,7 @@ Helios is a modular Discord bot built with discord.py and slash commands.
     }
     ```
     The bot will not function without this file.
-3. Run the bot:
+4. Run the bot:
    ```sh
    python bot.py
    ```
@@ -45,4 +46,4 @@ Helios is a modular Discord bot built with discord.py and slash commands.
 ## Notes
 - Make sure your bot token is kept secret and never shared publicly.
 - The bot uses slash commands; invite it with the `applications.commands` scope.
-- You must provide a `data/words.json` file for the password command to work.
+- You must provide a `data/words.json` file for the password commands to work.
