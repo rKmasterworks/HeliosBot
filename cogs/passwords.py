@@ -13,7 +13,7 @@ DATA_PATH = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', 'wo
 
 def generate_password():
     """
-    Generate a password of exactly 14 characters using Norwegian words and digits.
+    Generate a password of exactly 14 characters using English words and digits.
     Algorithm:
       1. Pick 2–3 random words from the list (never cut words).
       2. Add at least 1 random digit at the end (pad with more digits if needed).
@@ -45,6 +45,41 @@ def generate_password():
     digit_count = max(1, max_len - len(word))
     password = word + ''.join(random.choices('0123456789', k=digit_count))
     return password.capitalize()[:max_len]
+
+def student_generate_password():
+    """
+    Generate a password of exactly 8 characters using English words and digits.
+    Algorithm:
+      1. Pick 2–3 random words from the list (never cut words).
+      2. Add at least 1 random digit at the end (pad with more digits if needed).
+      3. If too long, remove last word and try again.
+      4. Capitalize the first letter.
+    Returns the password as a string, or None if word list is missing.
+    """
+    words = load_words()
+    if not words:
+        # Handle the case where no words are loaded (error already printed)
+        return None
+    max_len = 8
+    for _ in range(10):
+        num_words = random.choice([2, 3])
+        selected = random.sample(words, k=min(num_words, len(words)))
+        word_part = ''.join(selected)
+        digit_count = max(1, max_len - len(word_part))
+        password = word_part + ''.join(random.choices('0123456789', k=digit_count))
+        # If too long, try with one less word
+        if len(password) > max_len and len(selected) > 1:
+            selected = selected[:-1]
+            word_part = ''.join(selected)
+            digit_count = max(1, max_len - len(word_part))
+            password = word_part + ''.join(random.choices('0123456789', k=digit_count))
+        if len(password) == max_len and any(c.isdigit() for c in password[-digit_count:]):
+            return password.capitalize()
+    # Fallback: one word + digits
+    word = random.choice(words)
+    digit_count = max(1, max_len - len(word))
+    password = word + ''.join(random.choices('0123456789', k=digit_count))
+    return password.capitalize()[:max_len]
 class Passwords(commands.Cog):
     """
     Cog for password generation using Norwegian words and digits.
@@ -53,7 +88,7 @@ class Passwords(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 
-    @app_commands.command(name="password", description="Generate a Norwegian word-based password and receive it as a hidden message.")
+    @app_commands.command(name="teacherpassword", description="Generate a  teacher word-based password and receive it as a hidden message.")
     @require_helios_category
     async def password(self, interaction: discord.Interaction):
         """
@@ -67,6 +102,23 @@ class Passwords(commands.Cog):
         # Send password in a code block for easy copying
         await interaction.response.send_message(
             f"Your generated password:\n```{password}```\n*(This message will disappear after a short time)*",
+            ephemeral=True
+        )
+    
+    @app_commands.command(name="studentpassword", description="Generate a  student word-based password and receive it as a hidden message.")
+    @require_helios_category
+    async def studentpassword(self, interaction: discord.Interaction):
+        """
+        Slash command to generate a student password and send it as an ephemeral (hidden) message in the server.
+        Only works in channels under the 'Helios Labs' category.
+        """
+        password = student_generate_password()
+        if not password:
+            await interaction.response.send_message("Could not load word list. Please contact the bot admin.", ephemeral=True)
+            return
+        # Send password in a code block for easy copying
+        await interaction.response.send_message(
+            f"Your generated student password:\n```{password}```\n*(This message will disappear after a short time)*",
             ephemeral=True
         )
 
