@@ -11,8 +11,11 @@ STATE_FILE = "data/next.json"
 def get_next_state():
 	if not os.path.exists(STATE_FILE):
 		return {"index": 0, "date": None}
-	with open(STATE_FILE, "r") as f:
-		return json.load(f)
+	try:
+		with open(STATE_FILE, "r") as f:
+			return json.load(f)
+	except (json.JSONDecodeError, ValueError):
+		return {"index": 0, "date": None}
 
 def set_next_state(index, date):
 	with open(STATE_FILE, "w") as f:
