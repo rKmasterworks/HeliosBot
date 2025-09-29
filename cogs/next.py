@@ -21,8 +21,6 @@ def set_next_state(index, date):
 class NextCog(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
-		if hasattr(bot, "tree"):
-			bot.tree.add_command(self.next)
 
 	@app_commands.command(name="next", description="Who is next for Badehus duty?")
 	async def next(self, interaction: discord.Interaction):
