@@ -3,4 +3,5 @@
 __pycache__/
 cogs/__pycache__/
 data/words.json
+data/next.json
 *.pyc

@@ -2,7 +2,7 @@
 
 Helios is a modular Discord bot built with discord.py and slash commands.
 
-## Features
+- `/next`: Shows who is next for department duty (cycles through Iben, Paulius, Leo).
 - `/teacherpassword`: Generates a random teacher password (14 characters, Norwegian words + digits) and sends it as a hidden (ephemeral) message.
 - `/studentpassword`: Generates a random student password (8 characters, Norwegian words + digits) and sends it as a hidden (ephemeral) message.
 - `/ping <host>`: Pings a given host and returns the result.
