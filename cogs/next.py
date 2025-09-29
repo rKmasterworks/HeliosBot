@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from discord import app_commands
 import json
 import os
 import datetime
@@ -20,13 +21,15 @@ def set_next_state(index, date):
 class NextCog(commands.Cog):
 	def __init__(self, bot):
 		self.bot = bot
+		if hasattr(bot, "tree"):
+			bot.tree.add_command(self.next)
 
-	@commands.slash_command(name="next", description="Who is next for Badehus duty?")
-	async def next(self, ctx):
+	@app_commands.command(name="next", description="Who is next for Badehus duty?")
+	async def next(self, interaction: discord.Interaction):
 		today = datetime.datetime.now()
 		weekday = today.weekday()  # 0=Monday, 6=Sunday
 		if weekday >= 5:
-			await ctx.respond("No one is at the department on weekends (Saturday/Sunday).", ephemeral=True)
+			await interaction.response.send_message("No one is at the department on weekends (Saturday/Sunday).", ephemeral=True)
 			return
 		state = get_next_state()
 		last_date = state.get("date")
@@ -37,7 +40,7 @@ class NextCog(commands.Cog):
 			idx = (idx + 1) % len(NAMES) if last_date else idx  # Don't advance on first run
 			set_next_state(idx, today_str)
 		name = NAMES[idx % len(NAMES)]
-		await ctx.respond(f"Next is: {name}", ephemeral=True)
+		await interaction.response.send_message(f"Next is: {name}", ephemeral=True)
 
-def setup(bot):
-	bot.add_cog(NextCog(bot))
+async def setup(bot):
+	await bot.add_cog(NextCog(bot))
